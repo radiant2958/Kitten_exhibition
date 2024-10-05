@@ -1,5 +1,4 @@
-# exhibition/serializers.py
-
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Breed, Kitten, Rating
 
@@ -30,3 +29,18 @@ class RatingSerializer(serializers.ModelSerializer):
         if 1 <= value <= 5:
             return value
         raise serializers.ValidationError('Оценка должна быть от 1 до 5')
+
+
+class UserRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'password')
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password']
+        )
+        return user

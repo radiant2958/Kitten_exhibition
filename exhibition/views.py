@@ -1,5 +1,3 @@
-# exhibition/views.py
-
 from rest_framework import viewsets, permissions, filters, status
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Breed, Kitten, Rating
@@ -7,6 +5,10 @@ from .serializers import BreedSerializer, KittenSerializer, RatingSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import generics
+from .serializers import UserRegisterSerializer
+from rest_framework.permissions import AllowAny
+from django.contrib.auth.models import User
 
 class BreedViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Breed.objects.all()
@@ -69,3 +71,8 @@ class KittenViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class UserRegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRegisterSerializer
+    permission_classes = [AllowAny]
